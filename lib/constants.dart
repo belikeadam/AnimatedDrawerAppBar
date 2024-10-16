@@ -12,7 +12,7 @@ class AppColors {
   static const Color highlightColor = Color(0xFFFFEB3B);  // Yellow color
 
   // WHATSAPP LINK
-  static const String whatsappLink = 'https://wa.me/60162648073?text=Latest%20APK%20https%3A%2F%2Fapk.aliefmaju.com%2FPurchaseIndent.apk';
+  static const String whatsappLink = 'https://wa.me/';
 
   // CURRENCY
   static const String currencySymbol = '\RM'; // Default currency symbol
