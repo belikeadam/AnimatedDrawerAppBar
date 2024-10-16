@@ -16,20 +16,31 @@ class AnimatedDrawerAppBar extends StatefulWidget {
 
 class _AnimatedDrawerAppBarState extends State<AnimatedDrawerAppBar> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _animation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
   bool _isDrawerOpen = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 500), // Increased duration for smoother animation
+      duration: const Duration(milliseconds: 300), // Reduced duration
       vsync: this,
     );
-    _animation = CurvedAnimation(
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1.0, -1.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOutCubic, // Using a more sophisticated curve
-    );
+      curve: Curves.easeInOutCubic,
+    ));
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
+    ));
   }
 
   @override
@@ -57,49 +68,34 @@ class _AnimatedDrawerAppBarState extends State<AnimatedDrawerAppBar> with Single
         leading: IconButton(
           icon: AnimatedIcon(
             icon: AnimatedIcons.menu_close,
-            progress: _animation,
+            progress: _controller,
           ),
           onPressed: _toggleDrawer,
         ),
       ),
       body: Stack(
         children: [
-          // Your main content goes here
           Center(child: Text('Main Content')),
-
-          // Animated Drawer
-          AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: MediaQuery.of(context).size.width * 0.7,
-                child: Transform(
-                  transform: Matrix4.identity()
-                    ..translate(
-                      -MediaQuery.of(context).size.width * 0.7 * (1 - _animation.value),
-                      -MediaQuery.of(context).size.height * 0.3 * (1 - _animation.value),
-                    )
-                    ..scale(_animation.value, _animation.value),
-                  alignment: Alignment.topLeft,
-                  child: Drawer(
-                    child: ListView(
-                      children: [
-                        DrawerHeader(
-                          child: Text('Menu'),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        ...widget.menuItems.map((item) => _buildMenuItem(item)).toList(),
-                      ],
+          SlideTransition(
+            position: _slideAnimation,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              alignment: Alignment.topLeft,
+              child: Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    DrawerHeader(
+                      child: Text('Menu', style: TextStyle(color: Colors.white)),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                      ),
                     ),
-                  ),
+                    ...widget.menuItems.map((item) => _buildMenuItem(item)).toList(),
+                  ],
                 ),
-              );
-            },
+              ),
+            ),
           ),
         ],
       ),
