@@ -4,6 +4,7 @@ import 'package:animateddrawerappbar/text_styles.dart';
 import 'package:animateddrawerappbar/version_control.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:animateddrawerappbar/custom_appbar.dart'; // Import CustomAppBar
 
 class AnimatedDrawerAppBar extends StatefulWidget {
   final String title;
@@ -82,15 +83,10 @@ class _AnimatedDrawerAppBarState extends State<AnimatedDrawerAppBar> with Single
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        leading: IconButton(
-          icon: AnimatedIcon(
-            icon: AnimatedIcons.menu_close,
-            progress: _controller,
-          ),
-          onPressed: _toggleDrawer,
-        ),
+      appBar: CustomAppBar(
+        title: widget.title,
+        onMenuPressed: _toggleDrawer,
+        controller: _controller, // Pass AnimationController
       ),
       body: Stack(
         children: [
@@ -138,6 +134,7 @@ class _AnimatedDrawerAppBarState extends State<AnimatedDrawerAppBar> with Single
       ),
     );
   }
+
 
   Widget _buildHeader(BuildContext context) {
     return Container(
